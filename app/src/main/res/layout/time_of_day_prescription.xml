@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_view_time_of_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20sp"
+        android:paddingTop="5sp"
+        android:paddingEnd="5sp"
+        android:paddingBottom="3sp"
+        android:text="@string/morning"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/text_view_medicine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="45sp"
+        android:paddingTop="3sp"
+        android:paddingEnd="5sp"
+        android:paddingBottom="3sp"
+        android:text="@string/test_medicine"
+        android:textSize="18sp" />
+</LinearLayout>

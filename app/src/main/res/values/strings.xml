@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">MedicTime</string>
+    <string name="morning">Matin</string>
+    <string name="noon">Midi</string>
+    <string name="evening">Soir</string>
+    <string name="test_medicine">Testine de médicamentestule</string>
+    <string name="medicine">Médicament</string>
+    <string name="beginning">Début</string>
+    <string name="intakes">Prises</string>
+    <string name="end">Fin</string>
+    <string name="add">Ajouter</string>
+    <string name="validate">Valider</string>
+    <string name="name">Nom</string>
+    <string name="egdafalgan">Ex : Dafalgan</string>
+    <string name="default_duration">Durée par défaut</string>
+    <string name="default_intakes">Prises par défaut</string>
+    <string name="add_prescription">Ajouter une prescription</string>
+    <string name="add_medicine">Ajouter un médicament</string>
+    <string name="new_medicine">Nouveau médicament</string>
+</resources>

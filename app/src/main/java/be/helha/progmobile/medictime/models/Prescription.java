@@ -1,5 +1,8 @@
 package be.helha.progmobile.medictime.models;
 
+import android.util.Log;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -44,16 +47,16 @@ public class Prescription {
         return mPrescriptionStartDate;
     }
 
-    public void setPrescriptionStartDate(Date mPrescriptionStartDate) {
-        this.mPrescriptionStartDate = mPrescriptionStartDate;
+    public void setPrescriptionStartDate(Date prescriptionStartDate) {
+        this.mPrescriptionStartDate = prescriptionStartDate;
     }
 
     public Date getPrescriptionEndDate() {
         return mPrescriptionEndDate;
     }
 
-    public void setPrescriptionEndDate(Date mPrescriptionEndDate) {
-        this.mPrescriptionEndDate = mPrescriptionEndDate;
+    public void setPrescriptionEndDate(Date prescriptionEndDate) {
+        this.mPrescriptionEndDate = prescriptionEndDate;
     }
 
     public boolean isPrescriptionMorningIntake() {
@@ -84,8 +87,8 @@ public class Prescription {
         return mPresciptionMedicine;
     }
 
-    public void setPresciptionMedicine(Medicine mPresciptionMedicine) {
-        this.mPresciptionMedicine = mPresciptionMedicine;
+    public void setPrescriptionMedicine(Medicine mPrescriptionMedicine) {
+        this.mPresciptionMedicine = mPrescriptionMedicine;
     }
 
     public void setIntakes(boolean morning, boolean noon, boolean evening){

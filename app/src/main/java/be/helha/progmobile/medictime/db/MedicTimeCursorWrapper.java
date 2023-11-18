@@ -43,7 +43,7 @@ public class MedicTimeCursorWrapper extends CursorWrapper {
         int morningIntake = getInt(getColumnIndex(MedicTimeDbSchema.PrescriptionTable.cols.MORNING));
         int noonIntake = getInt(getColumnIndex(MedicTimeDbSchema.PrescriptionTable.cols.NOON));
         int eveningIntake = getInt(getColumnIndex(MedicTimeDbSchema.PrescriptionTable.cols.EVENING));
-        int medicineId = getInt(getColumnIndex(MedicTimeDbSchema.PrescriptionTable.cols.MEDICINE_ID_FK));
+        String medicineId = getString(getColumnIndex(MedicTimeDbSchema.PrescriptionTable.cols.MEDICINE_ID_FK));
 
         Date prescriptionStartDate;
         Date prescriptionEndDate;

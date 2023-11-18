@@ -29,7 +29,7 @@ public class AddMedicineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_medicine);
+        setContentView(R.layout.activity_medicine);
 
         mMedicTimeDataAccessObject = MedicTimeDataAccessObject.getInstance(getApplicationContext());
         Bundle mCheckBoxFragmentBundleArgs;
@@ -47,7 +47,7 @@ public class AddMedicineActivity extends AppCompatActivity {
 
         mEditTextMedicineName = findViewById(R.id.edit_text_name_of_new_medicine);
         mEditTextMedicineDuration = findViewById(R.id.edit_text_default_duration);
-        mAddButton = findViewById(R.id.button_add);
+        mAddButton = findViewById(R.id.button_validate);
 
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -66,11 +66,13 @@ public class AddMedicineActivity extends AppCompatActivity {
                     }
                 });
 
+        //TODO: check input data is correct and all fields are filled
         mAddButton.setOnClickListener(view->{
             //Sets the rest of the data of the medicine and validates.
             mMedicine.setMedicineName(mEditTextMedicineName.getText().toString());
             mMedicine.setMedicineDuration(Integer.parseInt(mEditTextMedicineDuration.getText().toString()));
             mMedicTimeDataAccessObject.addMedicine(mMedicine);
+            finish();
         });
 
     }

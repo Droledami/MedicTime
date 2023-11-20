@@ -109,10 +109,10 @@ public class MedicTimeDataAccessObject {
         mDatabase.insert(MedicTimeDbSchema.PrescriptionTable.NAME, null, createContentValuesOfPrescription(prescription));
     }
 
-    public Prescription getPrescription(int prescriptionId) {
+    public Prescription getPrescription(String prescriptionId) {
         String sqlWherePrescription = MessageFormat.format("{0} = ?", MedicTimeDbSchema.PrescriptionTable.cols.PRESCRIPTION_ID);
         try (MedicTimeCursorWrapper cursorWrapper
-                     = queryPrescriptions(sqlWherePrescription, new String[]{String.valueOf(prescriptionId)})) {
+                     = queryPrescriptions(sqlWherePrescription, new String[]{prescriptionId})) {
             if (cursorWrapper.getCount() == 0)
                 return null;
             cursorWrapper.moveToFirst();
@@ -124,7 +124,7 @@ public class MedicTimeDataAccessObject {
         List<Prescription> prescriptionList = new ArrayList<>();
         try (MedicTimeCursorWrapper cursorWrapper = queryPrescriptions(null, null)) {
             cursorWrapper.moveToFirst();
-            if (!cursorWrapper.isAfterLast()) {
+            while (!cursorWrapper.isAfterLast()) {
                 prescriptionList.add(cursorWrapper.getPrescription());
                 cursorWrapper.moveToNext();
             }

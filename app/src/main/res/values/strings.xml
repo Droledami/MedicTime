@@ -15,6 +15,8 @@
     <string name="default_duration">Durée par défaut</string>
     <string name="default_intakes">Prises par défaut</string>
     <string name="add_prescription">Ajouter une prescription</string>
+    <string name="edit_prescription">Modifier une prescription</string>
     <string name="add_medicine">Ajouter un médicament</string>
+    <string name="edit_medicine">Modifier un médicament</string>
     <string name="new_medicine">Nouveau médicament</string>
 </resources>

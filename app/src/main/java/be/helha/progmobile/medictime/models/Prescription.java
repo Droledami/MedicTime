@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class Prescription {
+public class Prescription implements Comparable<Prescription>{
     private UUID mPrescriptionId;
     private Date mPrescriptionStartDate;
     private Date mPrescriptionEndDate;
@@ -95,5 +95,15 @@ public class Prescription {
         setPrescriptionMorningIntake(morning);
         setPrescriptionNoonIntake(noon);
         setPrescriptionEveningIntake(evening);
+    }
+
+    @Override
+    public int compareTo(Prescription otherPrescription) {
+        if(this.mPrescriptionStartDate.before(otherPrescription.getPrescriptionStartDate()))
+            return -1;
+        else if (this.mPrescriptionStartDate.after(otherPrescription.getPrescriptionStartDate()))
+            return 1;
+        else
+            return 0;
     }
 }

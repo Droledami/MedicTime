@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout_day"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/text_view_time_of_day"
+        android:id="@+id/text_view_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="20sp"
+        android:paddingStart="10sp"
         android:paddingTop="5sp"
-        android:paddingEnd="5sp"
-        android:paddingBottom="3sp"
-        android:text="Moment de la journée"
+        android:paddingEnd="10sp"
+        android:paddingBottom="5sp"
+        android:text="LA DATE"
         android:textSize="24sp"
-        android:visibility="visible" />
-
-    <LinearLayout
-        android:id="@+id/linear_layout_medicine"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" />
-
+        android:textStyle="bold|italic" />
 </LinearLayout>

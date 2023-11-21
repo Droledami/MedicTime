@@ -86,6 +86,16 @@ public class MedicTimeDataAccessObject {
         }
     }
 
+    public int getMedicineSpinnerId(String medicineId){
+        String sqlWhereMedicineSpinnerId = MessageFormat.format("{0} = ?", MedicTimeDbSchema.MedicineTable.cols.MEDICINE_ID);
+        try (MedicTimeCursorWrapper cursorWrapper = queryMedicine(sqlWhereMedicineSpinnerId, new String[]{medicineId})) {
+            if (cursorWrapper.getCount() == 0)
+                return -1;
+            cursorWrapper.moveToFirst();
+            return cursorWrapper.getMedicineSpinnerId() - 1;
+        }
+    }
+
     public List<Medicine> getAllMedicine() {
         List<Medicine> medicineList = new ArrayList<>();
         try (MedicTimeCursorWrapper cursorWrapper = queryMedicine(null, null)) {

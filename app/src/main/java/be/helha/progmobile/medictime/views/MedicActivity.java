@@ -19,6 +19,7 @@ import be.helha.progmobile.medictime.R;
 
 public class MedicActivity extends AppCompatActivity {
     private FloatingActionButton mAddPrescriptionButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +27,7 @@ public class MedicActivity extends AppCompatActivity {
 
         mAddPrescriptionButton = findViewById(R.id.button_add_prescription);
         mAddPrescriptionButton.setOnClickListener((view)->{
+            //TODO: get the result of the added medicine to update the UI (reload the fragment probably)
             Intent intent = new Intent(this, PrescriptionActivity.class);
             startActivity(intent);
         });

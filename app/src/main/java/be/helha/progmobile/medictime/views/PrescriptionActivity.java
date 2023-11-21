@@ -42,16 +42,17 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
     private Prescription mPrescription;
     private boolean mPickingBeginningDate;
     private boolean mEditMode;
+    private boolean mEditBoot = false;
     private Medicine selectedMedicine;
 
     private ImageButton mImageButtonBeginningDate;
     private ImageButton mImageButtonEndDate;
     private FloatingActionButton mFloatingButtonAddMedicine;
+    private FloatingActionButton mFloatingButtonEditMedicine;
     private TextView mTextViewBeginningDate;
     private TextView mTextViewEndDate;
     private Spinner mSpinnerMedicine;
     private Button mButtonValidate;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,34 +63,41 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         addFragmentWithPrescriptionData();
         setListenersOnDatePickerTriggers();
 
+        if(mEditMode){//Set values of the selection to edit. Intakes values are set in addFragmentWithPrescriptionData
+            mEditBoot = true;
+            mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineSpinnerId(mPrescription.getPrescriptionMedicine().getMedicineId().toString()));
+            ((TextView)findViewById(R.id.text_view_add_prescription)).setText(R.string.edit_prescription);
+            mTextViewBeginningDate.setText(new SimpleDateFormat("d/M/yyyy").format(mPrescription.getPrescriptionStartDate()));
+            mTextViewEndDate.setText(new SimpleDateFormat("d/M/yyyy").format(mPrescription.getPrescriptionEndDate()));
+        }
+
+        //TODO: finish activity with result to force reload the fragment on medicActivity
         mButtonValidate.setOnClickListener((view)->{
-            Log.d("Presc Acti",
-                    "Id: " + mPrescription.getPrescriptionId().toString() +
-                    " start: " + mPrescription.getPrescriptionStartDate().toString() +
-                    " end: " + mPrescription.getPrescriptionEndDate().toString() +
-                    " Morning intake: " + mPrescription.isPrescriptionMorningIntake() +
-                    " Noon intake: " + mPrescription.isPrescriptionNoonIntake() +
-                    " Evening intake: " + mPrescription.isPrescriptionEveningIntake() +
-                    " Medicine name: " + mPrescription.getPrescriptionMedicine().getMedicineName());
-            //TODO:Test if update is fully functional
             if(mEditMode)
                 mMedicTimeDataAccessObject.updatePrescription(mPrescription);
             else
                 mMedicTimeDataAccessObject.addPrescription(mPrescription);
         });
 
-        //TODO: get result from addmedicine activity to update the CursorAdapter with medicineSpinnerAdapter.changerCursor(getMedicineListCursorAdapter());
+        //TODO: get result from addmedicine activity to update the CursorAdapter with medicineSpinnerAdapter.changeCursor(getMedicineListCursorAdapter());
         mFloatingButtonAddMedicine.setOnClickListener((view) -> {
             Intent addMedicineIntent = new Intent(this, AddMedicineActivity.class);
             startActivity(addMedicineIntent);
         });
+
+        mFloatingButtonEditMedicine.setOnClickListener((view->{
+            Intent editMedicineIntent = new Intent(this, AddMedicineActivity.class);
+            editMedicineIntent.putExtra(AddMedicineActivity.KEY_MEDICINE_ID, selectedMedicine.getMedicineId().toString());
+            startActivity(editMedicineIntent);
+        }));
+
     }
 
     private void addFragmentWithPrescriptionData() {
         String prescriptionId = getIntent().getStringExtra(KEY_PRESCRIPTION_ID);
-        if (prescriptionId != null){
+        if (prescriptionId != null)
             mPrescription = mMedicTimeDataAccessObject.getPrescription(prescriptionId);
-        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle mCheckBoxFragmentBundleArgs;
         if (mPrescription != null) {
@@ -100,15 +108,10 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
                     mPrescription.isPrescriptionNoonIntake(),
                     mPrescription.isPrescriptionEveningIntake()
             );
-            ((TextView)findViewById(R.id.text_view_add_prescription)).setText(R.string.edit_prescription);
-            //TODO: remettre dans le spinner le médicament de la prescription
-            mTextViewBeginningDate.setText(new SimpleDateFormat("d/M/yyyy").format(mPrescription.getPrescriptionStartDate()));
-            mTextViewEndDate.setText(new SimpleDateFormat("d/M/yyyy").format(mPrescription.getPrescriptionEndDate()));
         } else {
             //Create a new prescription and set values of the fragment's checkboxes to all false
             mEditMode = false;
             mCheckBoxFragmentBundleArgs = createBundleOfCheckBoxesValues(false, false, false);
-            Log.d("coucou", "je t'ennuie pas");
             mPrescription = new Prescription();
         }
         fragmentManager.beginTransaction()
@@ -160,6 +163,7 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         mTextViewEndDate = findViewById(R.id.text_view_date_end);
         mSpinnerMedicine = findViewById(R.id.spinner_medicine);
         mFloatingButtonAddMedicine = findViewById(R.id.floating_button_add_medicine);
+        mFloatingButtonEditMedicine = findViewById(R.id.floating_action_button_edit_medicine);
         mButtonValidate = findViewById(R.id.button_validate);
     }
 
@@ -170,18 +174,21 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         mSpinnerMedicine.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //TODO:In editMode, we should not replace the fragment because that would reset the intake values of the prescription
-                //Since "onItemSelected" is called when the activity starts, skip the first call with a local boolean
+
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 String selectedMedicineID = cursor.getString(cursor.getColumnIndexOrThrow(MedicTimeDbSchema.MedicineTable.cols.MEDICINE_ID));
                 selectedMedicine = mMedicTimeDataAccessObject.getMedicine(selectedMedicineID);
+                if(mEditBoot){
+                    //Skip the first call of the listener, which is called when the activity starts. This is just to avoid setting
+                    //the suggested intakes times of the medicine instead of the selected prescription's
+                    mEditBoot = false;
+                    return;
+                }
                 mPrescription.setPrescriptionMedicine(selectedMedicine);
-                Log.d("item selected", selectedMedicine.getMedicineId().toString());
                 Bundle medicineIntakeValues = createBundleOfCheckBoxesValues(
                         mPrescription.getPrescriptionMedicine().isMedicineMorningIntake(),
                         mPrescription.getPrescriptionMedicine().isMedicineNoonIntake(),
                         mPrescription.getPrescriptionMedicine().isMedicineEveningIntake());
-                Log.d("coucou", "je t'ennuie");
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container_times_of_day_checkboxes, TimeOfDayCheckBoxesFragment.class, medicineIntakeValues)
                         .commit();
@@ -207,7 +214,7 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
             mTextViewBeginningDate.setText(date);
             mPrescription.setPrescriptionStartDate(calendar.getTime());
 
-            calendar.add(Calendar.DAY_OF_MONTH, mPrescription.getPrescriptionMedicine().getMedicineDuration());
+            calendar.add(Calendar.DAY_OF_MONTH, mPrescription.getPrescriptionMedicine().getMedicineDuration() - 1);//Remove one day because we count the first in
             mPrescription.setPrescriptionEndDate(calendar.getTime());
             mTextViewEndDate.setText(getDateString(calendar));
         } else {

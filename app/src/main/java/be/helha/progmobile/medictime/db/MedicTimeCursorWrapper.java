@@ -22,6 +22,10 @@ public class MedicTimeCursorWrapper extends CursorWrapper {
         mMedicTimeDataAccessObject = MedicTimeDataAccessObject.getInstance(context);
     }
 
+    public int getMedicineSpinnerId(){
+        return getInt(getColumnIndex("_id"));
+    }
+
     public Medicine getMedicine(){
         String id = getString(getColumnIndex(MedicTimeDbSchema.MedicineTable.cols.MEDICINE_ID));
         String name = getString(getColumnIndex(MedicTimeDbSchema.MedicineTable.cols.NAME));

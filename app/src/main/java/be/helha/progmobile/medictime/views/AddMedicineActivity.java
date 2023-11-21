@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentResultListener;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import be.helha.progmobile.medictime.R;
 import be.helha.progmobile.medictime.models.MedicTimeDataAccessObject;
@@ -18,25 +19,41 @@ import be.helha.progmobile.medictime.views.fragments.TimeOfDayCheckBoxesFragment
 
 public class AddMedicineActivity extends AppCompatActivity {
 
+    public static final String KEY_MEDICINE_ID = "KEY_MEDICINE_ID";
     private MedicTimeDataAccessObject mMedicTimeDataAccessObject;
     private Medicine mMedicine;
     private boolean mEditMode;
 
+    private TextView mTextViewAddOrEditMedicine;
     private EditText mEditTextMedicineName;
     private EditText mEditTextMedicineDuration;
-    private Button mAddButton;
+    private Button mAddOrEditButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medicine);
 
+        mEditTextMedicineName = findViewById(R.id.edit_text_name_of_new_medicine);
+        mEditTextMedicineDuration = findViewById(R.id.edit_text_default_duration);
+        mAddOrEditButton = findViewById(R.id.button_validate);
+        mTextViewAddOrEditMedicine = findViewById(R.id.text_view_add_medicine);
+
         mMedicTimeDataAccessObject = MedicTimeDataAccessObject.getInstance(getApplicationContext());
         Bundle mCheckBoxFragmentBundleArgs;
+
+        String medicineId = getIntent().getStringExtra(KEY_MEDICINE_ID);
+        if(medicineId != null)
+            mMedicine = mMedicTimeDataAccessObject.getMedicine(medicineId);
+
         if(mMedicine != null){
             //We are editing a medicine
             mEditMode = true;
-            mCheckBoxFragmentBundleArgs = createBundleOfCheckBoxesValues(mMedicine.isMedicineNoonIntake(),
+            mAddOrEditButton.setText(R.string.edit);
+            mTextViewAddOrEditMedicine.setText(R.string.edit_medicine);
+            mEditTextMedicineName.setText(mMedicine.getMedicineName());
+            mEditTextMedicineDuration.setText(String.valueOf(mMedicine.getMedicineDuration()));
+            mCheckBoxFragmentBundleArgs = createBundleOfCheckBoxesValues(mMedicine.isMedicineMorningIntake(),
                     mMedicine.isMedicineNoonIntake(), mMedicine.isMedicineEveningIntake());
         }else{
             //We are adding a new medicine
@@ -44,11 +61,6 @@ public class AddMedicineActivity extends AppCompatActivity {
             mMedicine = new Medicine();
             mCheckBoxFragmentBundleArgs = createBundleOfCheckBoxesValues(false, false, false);
         }
-
-        mEditTextMedicineName = findViewById(R.id.edit_text_name_of_new_medicine);
-        mEditTextMedicineDuration = findViewById(R.id.edit_text_default_duration);
-        mAddButton = findViewById(R.id.button_validate);
-
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -67,16 +79,15 @@ public class AddMedicineActivity extends AppCompatActivity {
                 });
 
         //TODO: check input data is correct and all fields are filled
-        mAddButton.setOnClickListener(view->{
+        mAddOrEditButton.setOnClickListener(view->{
             //Sets the rest of the data of the medicine and validates.
             mMedicine.setMedicineName(mEditTextMedicineName.getText().toString());
             mMedicine.setMedicineDuration(Integer.parseInt(mEditTextMedicineDuration.getText().toString()));
-            mMedicTimeDataAccessObject.addMedicine(mMedicine);
+            if(mEditMode)
+                mMedicTimeDataAccessObject.updateMedicine(mMedicine);
+            else
+                mMedicTimeDataAccessObject.addMedicine(mMedicine);
             finish();
         });
-
     }
-
-
-
 }

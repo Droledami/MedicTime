@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,8 @@ import be.helha.progmobile.medictime.views.fragments.TimeOfDayCheckBoxesFragment
 public class MedicineActivity extends AppCompatActivity {
 
     public static final String KEY_MEDICINE_ID = "KEY_MEDICINE_ID";
+    public static final String KEY_MEDICINE_ADDED = "KEY_MEDICINE_ADDED";
+    public static final String KEY_MEDICINE_EDITED = "KEY_MEDICINE_EDITED";
     private MedicTimeDataAccessObject mMedicTimeDataAccessObject;
     private Medicine mMedicine;
     private boolean mEditMode;
@@ -46,12 +49,18 @@ public class MedicineActivity extends AppCompatActivity {
             if(checkIfAnEntryIsInvalid())
                 return;
             //Sets the rest of the data of the medicine and validates.
+            Intent data = new Intent();
             mMedicine.setMedicineName(mEditTextMedicineName.getText().toString());
             mMedicine.setMedicineDuration(Integer.parseInt(mEditTextMedicineDuration.getText().toString()));
-            if(mEditMode)
+            if(mEditMode){
                 mMedicTimeDataAccessObject.updateMedicine(mMedicine);
-            else
+                data.putExtra(KEY_MEDICINE_EDITED, true);
+            }
+            else{
                 mMedicTimeDataAccessObject.addMedicine(mMedicine);
+                data.putExtra(KEY_MEDICINE_ADDED, true);
+            }
+            this.setResult(RESULT_OK, data);
             finish();
         });
     }

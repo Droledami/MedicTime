@@ -2,6 +2,8 @@ package be.helha.progmobile.medictime.views;
 
 import static be.helha.progmobile.medictime.views.fragments.TimeOfDayCheckBoxesFragment.createBundleOfCheckBoxesValues;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -55,6 +57,21 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
     private TextView mTextViewEndDate;
     private Spinner mSpinnerMedicine;
     private Button mButtonValidate;
+    private final ActivityResultLauncher<Intent> mGetMedcineActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getData() != null && result.getResultCode() == RESULT_OK){
+                    Intent data = result.getData();
+                    if(data.getBooleanExtra(MedicineActivity.KEY_MEDICINE_ADDED, false)){
+                        populateSpinnerAndSetEvents();
+                        mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineCount()-1);
+                    }
+                    else if(data.getBooleanExtra(MedicineActivity.KEY_MEDICINE_EDITED, false)){
+                        populateSpinnerAndSetEvents();
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +89,6 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         if(mEditMode){//Set values of the selection to edit. Intakes values are set in addFragmentWithPrescriptionData
             setValuesOfPrescriptionToEdit();
         }
-    }
-
-    @Override
-    protected void onResume(){//onResume is used to update the spinner when we have added a new medicine
-        super.onResume();
-        if(mEditMode) return; //Don't change the spinner if we edited medicines when editing a prescription
-        populateSpinnerAndSetEvents();
-        mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineCount()-1);
     }
 
     @Override
@@ -112,14 +121,14 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         mFloatingButtonEditMedicine.setOnClickListener((view->{
             Intent editMedicineIntent = new Intent(this, MedicineActivity.class);
             editMedicineIntent.putExtra(MedicineActivity.KEY_MEDICINE_ID, selectedMedicine.getMedicineId().toString());
-            startActivity(editMedicineIntent);
+            mGetMedcineActivityResult.launch(editMedicineIntent);
         }));
     }
 
     private void setActivityStarterOnEditMedicineButton() {
         mFloatingButtonAddMedicine.setOnClickListener((view) -> {
             Intent addMedicineIntent = new Intent(this, MedicineActivity.class);
-            startActivity(addMedicineIntent);
+            mGetMedcineActivityResult.launch(addMedicineIntent);
         });
     }
 

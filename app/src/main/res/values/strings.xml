@@ -20,4 +20,6 @@
     <string name="add_medicine">Ajouter un médicament</string>
     <string name="edit_medicine">Modifier un médicament</string>
     <string name="new_medicine">Nouveau médicament</string>
+    <string name="incomplete_entry">Au moins un des champs est incomplet</string>
+    <string name="start_date_cant_be_after_end_date">La date de début ne peut pas être après la date de fin</string>
 </resources>

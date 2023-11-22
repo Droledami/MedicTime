@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import be.helha.progmobile.medictime.R;
 import be.helha.progmobile.medictime.models.MedicTimeDataAccessObject;
@@ -41,8 +42,9 @@ public class MedicineActivity extends AppCompatActivity {
     }
 
     private void setEventsOnAddOrEditButton() {
-        //TODO: check input data is correct and all fields are filled
         mAddOrEditButton.setOnClickListener(view->{
+            if(checkIfAnEntryIsInvalid())
+                return;
             //Sets the rest of the data of the medicine and validates.
             mMedicine.setMedicineName(mEditTextMedicineName.getText().toString());
             mMedicine.setMedicineDuration(Integer.parseInt(mEditTextMedicineDuration.getText().toString()));
@@ -52,6 +54,27 @@ public class MedicineActivity extends AppCompatActivity {
                 mMedicTimeDataAccessObject.addMedicine(mMedicine);
             finish();
         });
+    }
+
+    private boolean checkIfAnEntryIsInvalid(){
+        if(mEditTextMedicineDuration.getText().toString().equals("")){
+            showToastInvalidEntry();
+            return true;
+        }
+        if(mEditTextMedicineName.getText().toString().equals("")){
+            showToastInvalidEntry();
+            return true;
+        }
+        if(!mMedicine.isMedicineNoonIntake() && !mMedicine.isMedicineMorningIntake()
+                && !mMedicine.isMedicineEveningIntake()){
+            showToastInvalidEntry();
+            return true;
+        }
+        return false;
+    }
+
+    private void showToastInvalidEntry() {
+        Toast.makeText(this, R.string.incomplete_entry, Toast.LENGTH_SHORT).show();
     }
 
     private void addFragmentCheckBoxes(Bundle mCheckBoxFragmentBundleArgs) {

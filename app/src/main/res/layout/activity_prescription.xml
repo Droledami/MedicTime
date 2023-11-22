@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="30dp"
-        android:src="@android:drawable/btn_star"
+        android:src="@android:drawable/ic_menu_today"
         app:layout_constraintStart_toEndOf="@+id/text_view_date_beginning"
         app:layout_constraintTop_toBottomOf="@+id/spinner_medicine" />
 
@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:src="@android:drawable/btn_star"
+        android:src="@android:drawable/ic_menu_today"
         app:layout_constraintStart_toEndOf="@+id/text_view_date_end"
         app:layout_constraintTop_toBottomOf="@+id/image_button_pick_beginning_date" />
 

@@ -95,6 +95,7 @@ public class PrescriptionListFragment extends Fragment {
         }
     }
 
+    //TODO:Refactor fragment and methods
     private void addToDayPrescriptionView(Prescription prescription, View parentView, int dayAfterStart) {
         GregorianCalendar calForCurrentDayToDisplay = getZeroHouredCalendar();
         calForCurrentDayToDisplay.setTime(prescription.getPrescriptionStartDate());

@@ -4,16 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
-import be.helha.progmobile.medictime.models.MedicTimeDataAccessObject;
-import be.helha.progmobile.medictime.models.Prescription;
 import be.helha.progmobile.medictime.views.fragments.PrescriptionListFragment;
 import be.helha.progmobile.medictime.R;
 

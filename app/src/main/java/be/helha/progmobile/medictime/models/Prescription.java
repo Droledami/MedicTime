@@ -1,8 +1,5 @@
 package be.helha.progmobile.medictime.models;
 
-import android.util.Log;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 

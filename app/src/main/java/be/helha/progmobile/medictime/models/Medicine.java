@@ -2,8 +2,6 @@ package be.helha.progmobile.medictime.models;
 
 import java.util.UUID;
 
-import be.helha.progmobile.medictime.R;
-
 public class Medicine {
     private final static String NEW_MEDICINE = "Nouveau médicament"; //Possible d'utiliser string.xml sans passer le context dans le modèle? (Interface?)
     private UUID mMedicineId;

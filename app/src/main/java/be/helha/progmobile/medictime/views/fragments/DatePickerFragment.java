@@ -13,8 +13,6 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
-import be.helha.progmobile.medictime.R;
-
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     DatePickerDialog.OnDateSetListener listener;

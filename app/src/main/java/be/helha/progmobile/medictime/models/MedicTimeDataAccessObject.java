@@ -96,16 +96,14 @@ public class MedicTimeDataAccessObject {
         }
     }
 
-    public List<Medicine> getAllMedicine() {
-        List<Medicine> medicineList = new ArrayList<>();
+    public int getMedicineCount() {
         try (MedicTimeCursorWrapper cursorWrapper = queryMedicine(null, null)) {
-            cursorWrapper.moveToFirst();
-            while (!cursorWrapper.isAfterLast()) { //REMINDER: isAfterLast returns whether the cursor has been moved after the last row
-                medicineList.add(cursorWrapper.getMedicine());
-                cursorWrapper.moveToNext();
-            }
+            return cursorWrapper.getCount();
+        }catch (Error error) {
+            error.printStackTrace();
+            Log.d("MedicDAO", error.toString());
+            return -1;
         }
-        return medicineList;
     }
 
     public void updateMedicine(Medicine medicine) {
@@ -134,7 +132,7 @@ public class MedicTimeDataAccessObject {
         List<Prescription> prescriptionList = new ArrayList<>();
         try (MedicTimeCursorWrapper cursorWrapper = queryPrescriptions(null, null)) {
             cursorWrapper.moveToFirst();
-            while (!cursorWrapper.isAfterLast()) {
+            while (!cursorWrapper.isAfterLast()) { //REMINDER: isAfterLast returns whether the cursor has been moved after the last row
                 prescriptionList.add(cursorWrapper.getPrescription());
                 cursorWrapper.moveToNext();
             }

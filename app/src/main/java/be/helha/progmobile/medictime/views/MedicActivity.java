@@ -23,17 +23,35 @@ public class MedicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medic);
+        bindViewElementsToVariables();
+        setEventOnAddPrescriptionButton();
+        loadListOfPrescriptionFragment();
+    }
 
-        mAddPrescriptionButton = findViewById(R.id.button_add_prescription);
+    private void setEventOnAddPrescriptionButton() {
         mAddPrescriptionButton.setOnClickListener((view)->{
-            //TODO: get the result of the added medicine to update the UI (reload the fragment probably)
             Intent intent = new Intent(this, PrescriptionActivity.class);
             startActivity(intent);
         });
+    }
 
+    private void bindViewElementsToVariables() {
+        setContentView(R.layout.activity_medic);
+        mAddPrescriptionButton = findViewById(R.id.button_add_prescription);
+    }
+
+    private void loadListOfPrescriptionFragment() {
+        //Using replace instead of add to prevent fragment superpositions when rotating the screen
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container_prescriptions_list, PrescriptionListFragment.class, null)
+                .replace(R.id.fragment_container_prescriptions_list, PrescriptionListFragment.class, null)
                 .commit();
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        //onResume is used to update the list after we are done adding or editing prescriptions
+        loadListOfPrescriptionFragment();
+    }
+
 }

@@ -26,7 +26,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.UUID;
 
 import be.helha.progmobile.medictime.R;
 import be.helha.progmobile.medictime.db.MedicTimeDbSchema;
@@ -62,35 +61,58 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         populateSpinnerAndSetEvents();
         addFragmentWithPrescriptionData();
         setListenersOnDatePickerTriggers();
+        setEventsOnAddAndEditButton();
+        setActivityStarterOnEditMedicineButton();
+        setActivityStarterOnAddMedicineButton();
 
         if(mEditMode){//Set values of the selection to edit. Intakes values are set in addFragmentWithPrescriptionData
-            mEditBoot = true;
-            mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineSpinnerId(mPrescription.getPrescriptionMedicine().getMedicineId().toString()));
-            ((TextView)findViewById(R.id.text_view_add_prescription)).setText(R.string.edit_prescription);
-            mTextViewBeginningDate.setText(new SimpleDateFormat("d/M/yyyy").format(mPrescription.getPrescriptionStartDate()));
-            mTextViewEndDate.setText(new SimpleDateFormat("d/M/yyyy").format(mPrescription.getPrescriptionEndDate()));
+            setValuesOfPrescriptionToEdit();
         }
+    }
 
-        //TODO: finish activity with result to force reload the fragment on medicActivity
+    @Override
+    protected void onResume(){//onResume is used to update the spinner when we have added a new medicine
+        super.onResume();
+        populateSpinnerAndSetEvents();
+        //TODO: get result from addmedicine to only update the spinner when coming back from that activity
+        mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineCount()-1);
+    }
+
+    private void setActivityStarterOnAddMedicineButton() {
+        mFloatingButtonEditMedicine.setOnClickListener((view->{
+            Intent editMedicineIntent = new Intent(this, MedicineActivity.class);
+            editMedicineIntent.putExtra(MedicineActivity.KEY_MEDICINE_ID, selectedMedicine.getMedicineId().toString());
+            startActivity(editMedicineIntent);
+        }));
+    }
+
+    private void setActivityStarterOnEditMedicineButton() {
+        mFloatingButtonAddMedicine.setOnClickListener((view) -> {
+            Intent addMedicineIntent = new Intent(this, MedicineActivity.class);
+            startActivity(addMedicineIntent);
+        });
+    }
+
+    private void setEventsOnAddAndEditButton() {
         mButtonValidate.setOnClickListener((view)->{
             if(mEditMode)
                 mMedicTimeDataAccessObject.updatePrescription(mPrescription);
             else
                 mMedicTimeDataAccessObject.addPrescription(mPrescription);
+            finish();
         });
+    }
 
-        //TODO: get result from addmedicine activity to update the CursorAdapter with medicineSpinnerAdapter.changeCursor(getMedicineListCursorAdapter());
-        mFloatingButtonAddMedicine.setOnClickListener((view) -> {
-            Intent addMedicineIntent = new Intent(this, AddMedicineActivity.class);
-            startActivity(addMedicineIntent);
-        });
+    private void setValuesOfPrescriptionToEdit() {
+        mEditBoot = true;
+        String formatPattern = "d/M/yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(formatPattern);
+        String prescriptionId = mPrescription.getPrescriptionMedicine().getMedicineId().toString();
 
-        mFloatingButtonEditMedicine.setOnClickListener((view->{
-            Intent editMedicineIntent = new Intent(this, AddMedicineActivity.class);
-            editMedicineIntent.putExtra(AddMedicineActivity.KEY_MEDICINE_ID, selectedMedicine.getMedicineId().toString());
-            startActivity(editMedicineIntent);
-        }));
-
+        mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineSpinnerId(prescriptionId));
+        ((TextView)findViewById(R.id.text_view_add_prescription)).setText(R.string.edit_prescription);
+        mTextViewBeginningDate.setText(dateFormat.format(mPrescription.getPrescriptionStartDate()));
+        mTextViewEndDate.setText(dateFormat.format(mPrescription.getPrescriptionEndDate()));
     }
 
     private void addFragmentWithPrescriptionData() {

@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.icu.util.GregorianCalendar;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -98,6 +97,15 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         outState.putBoolean(KEY_SKIP_SPINNER_LISTENER, mSkipSpinnerListener);
     }
 
+    /**
+     * Sets values, notably the mEditMode and mPrescription, for the PrescriptionActivity based on the provided Bundle.
+     * This method retrieves the prescription ID from either the saved instance state or the intent.
+     * If the saved instance state is not null, it also retrieves the skip spinner listener flag.
+     * Using the prescription ID, it fetches prescription data from the database if available,
+     * setting the PrescriptionActivity in edit mode; otherwise, it creates a new Prescription and sets the activity in creation mode.
+     *
+     * @param savedInstanceState The saved instance state Bundle.
+     */
     private void setPrescriptionActivityValues(Bundle savedInstanceState) {
         //Get prescription Id either from savedInstance or intent
         String prescriptionId = getIntent().getStringExtra(KEY_PRESCRIPTION_ID);
@@ -190,8 +198,14 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         mTextViewEndDate.setText(dateFormat.format(mPrescription.getPrescriptionEndDate()));
     }
 
+    /**
+     * Adds the TimeOfDayCheckBoxesFragment to the fragment container based on prescription data.
+     * This method initializes a fragment manager and creates a bundle of checkbox values based on the prescription data.
+     * If in edit mode, it sets the values to the prescription's intake times; otherwise, it sets them to all false for a new prescription.
+     * It then replaces the fragment container with the TimeOfDayCheckBoxesFragment using the created bundle.
+     * Additionally, it sets a fragment result listener to update the prescription's intake times based on the fragment's result.
+     */
     private void addFragmentWithPrescriptionData() {
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle mCheckBoxFragmentBundleArgs;
         if (mEditMode) {
@@ -255,6 +269,13 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         mButtonValidate = findViewById(R.id.button_validate);
     }
 
+    /**
+     * Populates the medicine spinner and sets events for item selection.
+     * This method sets the adapter for the medicine spinner using data from the medicine data access object.
+     * It also registers an item selection listener for the spinner to handle the selection of a medicine.
+     * Upon selecting a medicine, it retrieves the selected medicine's information, updates the prescription's medicine,
+     * and updates the TimeOfDayCheckBoxesFragment with the suggested intake times for the selected medicine.
+     */
     private void populateSpinnerAndSetEvents() {
         CursorAdapter medicineSpinnerAdapter = mMedicTimeDataAccessObject.getMedicineListCursorAdapter();
         mSpinnerMedicine.setAdapter(medicineSpinnerAdapter);
@@ -272,7 +293,6 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
                     mSkipSpinnerListener = false;
                     return;
                 }
-                Log.d("SPinner", "casse-couille");
                 mPrescription.setPrescriptionMedicine(selectedMedicine);
                 Bundle medicineIntakeValues = createBundleOfCheckBoxesValues(
                         mPrescription.getPrescriptionMedicine().isMedicineMorningIntake(),
@@ -295,6 +315,17 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
+    /**
+     * Callback method invoked when a date is set in a DatePickerDialog.
+     * This method is used for selecting the beginning or end date for a prescription.
+     * If {@code mPickingBeginningDate} is true, it sets the beginning date and calculates the end date based on medicine duration.
+     * If false, it sets the end date only.
+     *
+     * @param view The DatePicker view.
+     * @param year The selected year.
+     * @param month The selected month (0-11 for compatibility with Calendar class).
+     * @param dayOfMonth The selected day of the month.
+     */
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         GregorianCalendar calendar = new GregorianCalendar(year, month, dayOfMonth);

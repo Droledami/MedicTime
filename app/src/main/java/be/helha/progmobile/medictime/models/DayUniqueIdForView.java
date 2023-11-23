@@ -1,5 +1,10 @@
 package be.helha.progmobile.medictime.models;
 
+/**
+ * A class representing unique identifiers for different components of a day view.
+ * This class encapsulates identifiers for the day, morning, noon, and evening views within a day view.
+ * These identifiers are used to reference specific views associated with a particular day.
+ **/
 public class DayUniqueIdForView {
     private int mDayID;
     private int mMorningID;

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
-import android.util.Log;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
@@ -33,7 +32,6 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     }
 
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Log.d("DATE PICKER", "A date was chosen !" + year + " " + month + " " + dayOfMonth);
         listener.onDateSet(view, year, month, dayOfMonth);
     }
 }

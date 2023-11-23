@@ -33,6 +33,7 @@ public class MedicineActivity extends AppCompatActivity {
     private EditText mEditTextMedicineDuration;
     private Button mAddOrEditButton;
 
+    //TODO:ajouter bouton augmenter/dimunuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

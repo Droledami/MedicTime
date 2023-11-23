@@ -114,7 +114,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="185dp"
+        android:layout_marginTop="160dp"
         app:layout_constraintStart_toEndOf="@+id/edit_text_default_duration"
         app:layout_constraintTop_toBottomOf="@+id/text_view_add_medicine"
         app:srcCompat="@android:drawable/arrow_up_float" />

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.icu.util.GregorianCalendar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -41,6 +42,7 @@ import be.helha.progmobile.medictime.views.fragments.TimeOfDayCheckBoxesFragment
 public class PrescriptionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     public static final String KEY_PRESCRIPTION_ID = "KEY_PRESCRIPTION_ID";
     public static final String KEY_SKIP_SPINNER_LISTENER = "KEY_SKIP_SPINNER_LISTENER";
+    private int mSpinnerPosition;
     private MedicTimeDataAccessObject mMedicTimeDataAccessObject;
     private Prescription mPrescription;
     private boolean mPickingBeginningDate;
@@ -56,7 +58,7 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
     private TextView mTextViewEndDate;
     private Spinner mSpinnerMedicine;
     private Button mButtonValidate;
-    private final ActivityResultLauncher<Intent> mGetMedcineActivityResult = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> mGetMedicineActivityResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getData() != null && result.getResultCode() == RESULT_OK){
@@ -66,7 +68,11 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
                         mSpinnerMedicine.setSelection(mMedicTimeDataAccessObject.getMedicineCount()-1);
                     }
                     else if(data.getBooleanExtra(MedicineActivity.KEY_MEDICINE_EDITED, false)){
+                        boolean amountOfDayChanged = data.getBooleanExtra(MedicineActivity.KEY_DAY_AMOUNT_CHANGED, false);
                         populateSpinnerAndSetEvents();
+                        if(!amountOfDayChanged)
+                            mSkipSpinnerListener = true;
+                        mSpinnerMedicine.setSelection(mSpinnerPosition);
                     }
                 }
             }
@@ -82,8 +88,8 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
         addFragmentWithPrescriptionData();
         setListenersOnDatePickerTriggers();
         setEventsOnAddAndEditButton();
-        setActivityStarterOnEditMedicineButton();
         setActivityStarterOnAddMedicineButton();
+        setActivityStarterOnEditMedicineButton();
 
         if(mEditMode){//Set values of the selection to edit. Intakes values are set in addFragmentWithPrescriptionData
             setValuesOfPrescriptionToEdit();
@@ -125,18 +131,19 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
     }
 
 
-    private void setActivityStarterOnAddMedicineButton() {
+    private void setActivityStarterOnEditMedicineButton() {
         mFloatingButtonEditMedicine.setOnClickListener((view->{
             Intent editMedicineIntent = new Intent(this, MedicineActivity.class);
+            mSpinnerPosition = mSpinnerMedicine.getSelectedItemPosition();
             editMedicineIntent.putExtra(MedicineActivity.KEY_MEDICINE_ID, selectedMedicine.getMedicineId().toString());
-            mGetMedcineActivityResult.launch(editMedicineIntent);
+            mGetMedicineActivityResult.launch(editMedicineIntent);
         }));
     }
 
-    private void setActivityStarterOnEditMedicineButton() {
+    private void setActivityStarterOnAddMedicineButton() {
         mFloatingButtonAddMedicine.setOnClickListener((view) -> {
             Intent addMedicineIntent = new Intent(this, MedicineActivity.class);
-            mGetMedcineActivityResult.launch(addMedicineIntent);
+            mGetMedicineActivityResult.launch(addMedicineIntent);
         });
     }
 
@@ -293,6 +300,7 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
                     mSkipSpinnerListener = false;
                     return;
                 }
+                Log.d("Spinner", "C'est encore moi");
                 mPrescription.setPrescriptionMedicine(selectedMedicine);
                 Bundle medicineIntakeValues = createBundleOfCheckBoxesValues(
                         mPrescription.getPrescriptionMedicine().isMedicineMorningIntake(),
@@ -337,7 +345,7 @@ public class PrescriptionActivity extends AppCompatActivity implements DatePicke
             calendar.add(Calendar.DAY_OF_MONTH, mPrescription.getPrescriptionMedicine().getMedicineDuration() - 1);//Remove one day because we count the first day in it
             mPrescription.setPrescriptionEndDate(calendar.getTime());
             mTextViewEndDate.setText(getDateString(calendar));
-            Toast.makeText(this, MessageFormat.format("Ajouté la durée par défaut ({0} jours) à la date sélectionnée",
+            Toast.makeText(this, MessageFormat.format("Ajouté la durée par défaut ({0} jour(s)) à la date sélectionnée",
                             mPrescription.getPrescriptionMedicine().getMedicineDuration()), Toast.LENGTH_LONG).show();
         } else {
             mTextViewEndDate.setText(date);

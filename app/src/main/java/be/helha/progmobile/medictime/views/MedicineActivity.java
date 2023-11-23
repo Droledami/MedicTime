@@ -9,8 +9,10 @@ import androidx.fragment.app.FragmentResultListener;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ public class MedicineActivity extends AppCompatActivity {
     public static final String KEY_MEDICINE_ID = "KEY_MEDICINE_ID";
     public static final String KEY_MEDICINE_ADDED = "KEY_MEDICINE_ADDED";
     public static final String KEY_MEDICINE_EDITED = "KEY_MEDICINE_EDITED";
+    public static final String KEY_DAY_AMOUNT_CHANGED = "KEY_DAY_AMOUNT_CHANGED";
     private MedicTimeDataAccessObject mMedicTimeDataAccessObject;
     private Medicine mMedicine;
     private boolean mEditMode;
@@ -32,6 +35,8 @@ public class MedicineActivity extends AppCompatActivity {
     private EditText mEditTextMedicineName;
     private EditText mEditTextMedicineDuration;
     private Button mAddOrEditButton;
+    private ImageButton mImageButtonUp;
+    private ImageButton mImageButtonDown;
 
     //TODO:ajouter bouton augmenter/dimunuer
     @Override
@@ -43,6 +48,21 @@ public class MedicineActivity extends AppCompatActivity {
                 defineEditModeAndGetFragmentBundleData();
         addFragmentCheckBoxes(mCheckBoxFragmentBundleArgs);
         setEventsOnAddOrEditButton();
+        setEventsOnUpDownButtons();
+    }
+
+    private void setEventsOnUpDownButtons() {
+        mImageButtonDown.setOnClickListener((view)->{
+            mMedicine.setMedicineDuration(mMedicine.getMedicineDuration()-1);
+            if(mMedicine.getMedicineDuration() < 1){
+                mMedicine.setMedicineDuration(1);
+            }
+            mEditTextMedicineDuration.setText(String.valueOf(mMedicine.getMedicineDuration()));
+        });
+        mImageButtonUp.setOnClickListener((view)->{
+            mMedicine.setMedicineDuration(mMedicine.getMedicineDuration()+1);
+            mEditTextMedicineDuration.setText(String.valueOf(mMedicine.getMedicineDuration()));
+        });
     }
 
     private void setEventsOnAddOrEditButton() {
@@ -51,11 +71,16 @@ public class MedicineActivity extends AppCompatActivity {
                 return;
             //Sets the rest of the data of the medicine and validates.
             Intent data = new Intent();
+            boolean medicineChanged = mMedicine.getMedicineDuration() !=
+                    Integer.parseInt(mEditTextMedicineDuration.getText().toString());
             mMedicine.setMedicineName(mEditTextMedicineName.getText().toString());
             mMedicine.setMedicineDuration(Integer.parseInt(mEditTextMedicineDuration.getText().toString()));
             if(mEditMode){
                 mMedicTimeDataAccessObject.updateMedicine(mMedicine);
                 data.putExtra(KEY_MEDICINE_EDITED, true);
+                if(medicineChanged){
+                    data.putExtra(KEY_DAY_AMOUNT_CHANGED, true);
+                }
             }
             else{
                 mMedicTimeDataAccessObject.addMedicine(mMedicine);
@@ -68,22 +93,30 @@ public class MedicineActivity extends AppCompatActivity {
 
     private boolean checkIfAnEntryIsInvalid(){
         if(mEditTextMedicineDuration.getText().toString().equals("")){
+            showToastIncompleteEntry();
+            return true;
+        }
+        if(Integer.parseInt(mEditTextMedicineDuration.getText().toString()) < 1){
             showToastInvalidEntry();
             return true;
         }
         if(mEditTextMedicineName.getText().toString().equals("")){
-            showToastInvalidEntry();
+            showToastIncompleteEntry();
             return true;
         }
         if(!mMedicine.isMedicineNoonIntake() && !mMedicine.isMedicineMorningIntake()
                 && !mMedicine.isMedicineEveningIntake()){
-            showToastInvalidEntry();
+            showToastIncompleteEntry();
             return true;
         }
         return false;
     }
 
     private void showToastInvalidEntry() {
+        Toast.makeText(this, R.string.invalid_entry, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showToastIncompleteEntry() {
         Toast.makeText(this, R.string.incomplete_entry, Toast.LENGTH_SHORT).show();
     }
 
@@ -137,5 +170,7 @@ public class MedicineActivity extends AppCompatActivity {
         mEditTextMedicineDuration = findViewById(R.id.edit_text_default_duration);
         mAddOrEditButton = findViewById(R.id.button_validate);
         mTextViewAddOrEditMedicine = findViewById(R.id.text_view_add_medicine);
+        mImageButtonUp = findViewById(R.id.image_button_up);
+        mImageButtonDown = findViewById(R.id.image_button_down);
     }
 }

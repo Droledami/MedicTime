@@ -109,4 +109,23 @@
         app:layout_constraintTop_toBottomOf="@+id/text_view_default_duration"
         app:layout_constraintVertical_bias="0.244" />
 
+    <ImageButton
+        android:id="@+id/image_button_up"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="185dp"
+        app:layout_constraintStart_toEndOf="@+id/edit_text_default_duration"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_add_medicine"
+        app:srcCompat="@android:drawable/arrow_up_float" />
+
+    <ImageButton
+        android:id="@+id/image_button_down"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="14dp"
+        app:layout_constraintStart_toEndOf="@+id/edit_text_default_duration"
+        app:layout_constraintTop_toBottomOf="@+id/image_button_up"
+        app:srcCompat="@android:drawable/arrow_down_float" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
